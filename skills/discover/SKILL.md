@@ -3,6 +3,8 @@ name: discover
 description: Gather and document the context needed to implement a feature, fix a bug, or refactor code in an unfamiliar or large codebase. Use this skill at the start of any non-trivial coding task, before writing or modifying any code — especially when the user asks to "implement", "add", "fix", "refactor", "change how X works", or "look into" something, even if they don't explicitly say "explore" or "investigate". Also use when the user shares a ticket, bug report, or feature request that touches unfamiliar parts of a codebase. Produces a single markdown artifact (`CONTEXT-<slug>.md`) that lists every file, symbol, convention, and constraint relevant to the task. Do NOT use this skill for trivial edits (typo fixes, one-line changes in a file the user pointed to directly) or for tasks that are purely conversational (explaining a concept, reviewing a snippet pasted into chat).
 license: MIT
 metadata:
+  author: "Tim Miles"
+  email: "49971977+mlstm@users.noreply.github.com"
   version: "1.0"
 ---
 

@@ -4,6 +4,8 @@ description: >-
   Implement a feature, bug fix, or refactor in an existing codebase by writing or modifying code against a known plan. Use this skill when the user asks to "implement", "build", "add", "write the code for", "make the change", or "do it" — and the task is concrete enough that you know what files to touch. If a CONTEXT-<task>.md document already exists for this task, load it; if not, and the task is non-trivial, recommend running the discovery skill first instead of guessing. Also use when the user explicitly hands off from a discovery or planning session ("here's the context doc, go implement it"). Do NOT use this skill for exploration or context-gathering (use discovery), trivial one-line edits the user pointed at directly, code review, debugging without a plan, or tasks where the user is still deciding what they want. Produces working code with tests, validated by running the project's test and lint commands before handing back.
 license: MIT
 metadata:
+  author: "Tim Miles"
+  email: "49971977+mlstm@users.noreply.github.com"
   version: "1.0"
 ---
 

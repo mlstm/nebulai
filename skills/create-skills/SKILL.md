@@ -3,8 +3,10 @@ name: create-skills
 description: Create, update, or review Agent Skills that conform to the agentskills.io specification. Use this skill whenever the user asks to "create a skill", "make a skill", "write a SKILL.md", "update/fix/improve a skill", "review a skill", or describes wanting to package a repeatable workflow, procedure, or domain expertise into a reusable skill for an agent. Covers directory structure, SKILL.md frontmatter, writing effective descriptions that trigger reliably, progressive disclosure, bundling scripts, and evaluating skill quality.
 license: MIT
 metadata:
-  version: "2.0"
+  author: "Tim Miles"
+  email: "49971977+mlstm@users.noreply.github.com"
   source: https://agentskills.io/specification
+  version: "2.0"
 ---
 
 # create-skills
