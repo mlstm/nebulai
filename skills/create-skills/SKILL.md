@@ -7,6 +7,8 @@ metadata:
   email: "49971977+mlstm@users.noreply.github.com"
   source: https://agentskills.io/specification
   version: "2.0"
+model: opus
+effort: high
 ---
 
 # create-skills

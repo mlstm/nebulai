@@ -6,6 +6,8 @@ metadata:
   author: "Tim Miles"
   email: "49971977+mlstm@users.noreply.github.com"
   version: "1.0"
+model: opus
+effort: high
 ---
 
 # Discover
