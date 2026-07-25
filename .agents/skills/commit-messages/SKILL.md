@@ -1,6 +1,13 @@
 ---
 name: commit-messages
 description: Use this skill whenever suggesting, writing, or reviewing a git commit message for the nebulai repo. Covers the repo's two commit message styles (minimalist and fun/thematic) and when to use each. Trigger on requests like "commit message for...", "give me a commit name", or when about to commit a change in this repo.
+license: MIT
+metadata:
+  author: "Tim Miles"
+  email: "49971977+mlstm@users.noreply.github.com"
+  version: "1.1"
+model: sonnet
+effort: high
 ---
 
 # nebulai Commit Message Conventions
@@ -34,13 +41,15 @@ add MIT license
 - Emoji optional, use sparingly (fine for milestone commits like "first commit" or major additions, skip for small/routine ones).
 - Lowercase start is fine (matches minimalist convention).
 
-Examples:
+Examples (all real commits from this repo's history):
 ```
 nebulai gains sentience (and some skills)
-nebulai learns to make its own skills
-nebulai learns to tidy its own room (justfile: stow + link)
-nebulai's skills finally know who made them
-skills level up: now with author + metadata
+nebulai learns to create skills
+skills gain an identity crisis: who am I? oh right, metadata
+nebulai gets legal
+skills get opinions: model and effort
+teaching nebulai to stow its stuff
+nebulai learns to name its own commits
 ```
 
 ## General rules
@@ -49,3 +58,4 @@ skills level up: now with author + metadata
 - Never invent details about what changed — base the message only on the actual diff or description given.
 - Milestone changes (first commit, major new capability) → lean fun as the default recommendation.
 - Small, routine, or config-only changes (metadata, license, dependency bump) → lean minimalist as the default recommendation.
+- In practice the fun option has won every time so far, including for config-only changes — offer both, but don't be surprised.
