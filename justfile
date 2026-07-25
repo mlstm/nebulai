@@ -9,6 +9,13 @@ link:
     mkdir -p {{ target }}
     stow -d {{ justfile_directory() }} -t {{ target }} skills
 
+# link .agents/skills into .claude/skills for use in this repo
+[unix]
+setup:
+    @command -v claude >/dev/null || { echo "claude code not found on PATH"; exit 1; }
+    mkdir -p {{ justfile_directory() }}/.claude
+    ln -sfn ../.agents/skills {{ justfile_directory() }}/.claude/skills
+
 # unlink
 unlink:
     stow -D -d {{ justfile_directory() }} -t {{ target }} skills
