@@ -1,12 +1,12 @@
 ---
 name: implement
 description: >-
-  Implement a feature, bug fix, or refactor in an existing codebase by writing or modifying code against a known plan. Use this skill when the user asks to "implement", "build", "add", "write the code for", "make the change", or "do it" — and the task is concrete enough that you know what files to touch. If a `docs/specs/<slug>/SPEC.md` already exists for this task, load it; if not, and the task is non-trivial, recommend running the discovery skill first instead of guessing. Also use when the user explicitly hands off from a discovery or planning session ("here's the spec, go implement it"). Do NOT use this skill for exploration or context-gathering (use discovery), trivial one-line edits the user pointed at directly, code review, debugging without a plan, or tasks where the user is still deciding what they want. Produces working code with tests, validated by running the project's test and lint commands before handing back.
+  Implement a feature, bug fix, or refactor in an existing codebase by writing or modifying code against a known plan. Use this skill when the user asks to "implement", "build", "add", "write the code for", "make the change", or "do it" — and the task is concrete enough that you know what files to touch. If a `docs/specs/<slug>/SPEC.md` already exists for this task, load it; if not, and the task is non-trivial, recommend running the discover skill first instead of guessing. Also use when the user explicitly hands off from a discovery or planning session ("here's the spec, go implement it"). Do NOT use this skill for exploration or context-gathering (use discover), trivial one-line edits the user pointed at directly, code review, debugging without a plan, or tasks where the user is still deciding what they want. Produces working code with tests, validated by running the project's test and lint commands before handing back.
 license: MIT
 metadata:
   author: "Tim Miles"
   email: "49971977+mlstm@users.noreply.github.com"
-  version: "2.0"
+  version: "2.1"
 model: sonnet
 effort: high
 ---
@@ -19,7 +19,7 @@ Write code against a known plan, in small reversible steps, with the plan visibl
 
 Asked to "implement feature X", agents tend to: skim a few files, start editing, lose track of what they're doing halfway through, silently fix unrelated things they noticed, declare victory without running the full test suite, and produce a diff that's twice the size of what was asked for. This skill exists to prevent each of those failure modes by externalizing the plan and gating progress on small verifiable steps.
 
-This is the second half of a two-phase workflow. The first half (`discovery`) produces a spec. This skill consumes that artifact. If there is no artifact and the task is non-trivial, recommend running discovery first rather than implementing blind.
+This is the second half of a two-phase workflow. The first half (`discover`) produces a spec. This skill consumes that artifact. If there is no artifact and the task is non-trivial, recommend running `discover` first rather than implementing blind.
 
 ## When this skill is active
 
@@ -46,7 +46,7 @@ If you find one, read the whole thing.
 If no spec exists:
 
 - If the task is trivial (a one-line fix, a rename in a single file the user pointed at), skip to Phase 2 with a one-paragraph "scope" note instead of a full spec.
-- If the task is non-trivial, stop and recommend: "I don't see a spec for this task. The `discovery` skill produces one — running it first will make the implementation more accurate. Want me to do discovery first, or proceed without it?" Wait for the answer. If they say proceed, do a minimal context pass yourself (read the files the change will touch, end-to-end) before any edits — but tell the user this is faster-and-riskier than discovery.
+- If the task is non-trivial, stop and recommend: "I don't see a spec for this task. The `discover` skill produces one — running it first will make the implementation more accurate. Want me to run `discover` first, or proceed without it?" Wait for the answer. If they say proceed, do a minimal context pass yourself (read the files the change will touch, end-to-end) before any edits — but tell the user this is faster-and-riskier than discovery.
 
 Either way, do not start writing code until you can answer: which files will I touch, which files constrain the change, and what conventions does this codebase follow?
 
