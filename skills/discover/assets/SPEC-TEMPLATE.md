@@ -1,7 +1,7 @@
-# CONTEXT: <short task title>
+# SPEC: <short task title>
 
 > One sentence stating what this document is for.
-> e.g. "Context for implementing OAuth refresh-token rotation in the auth service."
+> e.g. "Spec for implementing OAuth refresh-token rotation in the auth service."
 
 ## Task
 

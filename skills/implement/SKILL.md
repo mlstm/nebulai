@@ -1,12 +1,12 @@
 ---
 name: implement
 description: >-
-  Implement a feature, bug fix, or refactor in an existing codebase by writing or modifying code against a known plan. Use this skill when the user asks to "implement", "build", "add", "write the code for", "make the change", or "do it" — and the task is concrete enough that you know what files to touch. If a CONTEXT-<task>.md document already exists for this task, load it; if not, and the task is non-trivial, recommend running the discovery skill first instead of guessing. Also use when the user explicitly hands off from a discovery or planning session ("here's the context doc, go implement it"). Do NOT use this skill for exploration or context-gathering (use discovery), trivial one-line edits the user pointed at directly, code review, debugging without a plan, or tasks where the user is still deciding what they want. Produces working code with tests, validated by running the project's test and lint commands before handing back.
+  Implement a feature, bug fix, or refactor in an existing codebase by writing or modifying code against a known plan. Use this skill when the user asks to "implement", "build", "add", "write the code for", "make the change", or "do it" — and the task is concrete enough that you know what files to touch. If a `docs/specs/<slug>/SPEC.md` already exists for this task, load it; if not, and the task is non-trivial, recommend running the discovery skill first instead of guessing. Also use when the user explicitly hands off from a discovery or planning session ("here's the spec, go implement it"). Do NOT use this skill for exploration or context-gathering (use discovery), trivial one-line edits the user pointed at directly, code review, debugging without a plan, or tasks where the user is still deciding what they want. Produces working code with tests, validated by running the project's test and lint commands before handing back.
 license: MIT
 metadata:
   author: "Tim Miles"
   email: "49971977+mlstm@users.noreply.github.com"
-  version: "1.0"
+  version: "2.0"
 model: sonnet
 effort: high
 ---
@@ -19,7 +19,7 @@ Write code against a known plan, in small reversible steps, with the plan visibl
 
 Asked to "implement feature X", agents tend to: skim a few files, start editing, lose track of what they're doing halfway through, silently fix unrelated things they noticed, declare victory without running the full test suite, and produce a diff that's twice the size of what was asked for. This skill exists to prevent each of those failure modes by externalizing the plan and gating progress on small verifiable steps.
 
-This is the second half of a two-phase workflow. The first half (`discovery`) produces a context artifact. This skill consumes that artifact. If there is no artifact and the task is non-trivial, recommend running discovery first rather than implementing blind.
+This is the second half of a two-phase workflow. The first half (`discovery`) produces a spec. This skill consumes that artifact. If there is no artifact and the task is non-trivial, recommend running discovery first rather than implementing blind.
 
 ## When this skill is active
 
@@ -33,22 +33,39 @@ You may write, edit, and run code. You may not:
 
 ## The procedure
 
-### Phase 1 — Load context
+### Phase 1 — Load the spec
 
-In your first action, look for an existing `CONTEXT-<slug>.md` for this task (in the repo root or `docs/context/`). If it exists, read the whole thing.
+In your first action, look for the spec for this task, in this order:
 
-If no context document exists:
+1. `docs/specs/<slug>/SPEC.md`. If the slug isn't obvious, list `docs/specs/*/SPEC.md` and match by title; ask if more than one fits.
+2. `SPEC-<slug>.md` at the root.
+3. A spec in the current conversation.
 
-- If the task is trivial (a one-line fix, a rename in a single file the user pointed at), skip to Phase 2 with a one-paragraph "scope" note instead of a full context doc.
-- If the task is non-trivial, stop and recommend: "I don't see a `CONTEXT-*.md` for this task. The `discovery` skill produces one — running it first will make the implementation more accurate. Want me to do discovery first, or proceed without it?" Wait for the answer. If they say proceed, do a minimal context pass yourself (read the files the change will touch, end-to-end) before any edits — but tell the user this is faster-and-riskier than discovery.
+If you find one, read the whole thing.
+
+If no spec exists:
+
+- If the task is trivial (a one-line fix, a rename in a single file the user pointed at), skip to Phase 2 with a one-paragraph "scope" note instead of a full spec.
+- If the task is non-trivial, stop and recommend: "I don't see a spec for this task. The `discovery` skill produces one — running it first will make the implementation more accurate. Want me to do discovery first, or proceed without it?" Wait for the answer. If they say proceed, do a minimal context pass yourself (read the files the change will touch, end-to-end) before any edits — but tell the user this is faster-and-riskier than discovery.
 
 Either way, do not start writing code until you can answer: which files will I touch, which files constrain the change, and what conventions does this codebase follow?
 
 ### Phase 2 — Draft `PLAN.md`
 
-Use `assets/PLAN-TEMPLATE.md`. Copy it to `PLAN.md` at the repo root and fill in every section. Keep steps small — see `references/step-sizing.md` for the heuristic.
+Use `assets/PLAN-TEMPLATE.md`. Copy it to `PLAN.md` next to the spec and fill in every section. Keep steps small — see `references/step-sizing.md` for the heuristic.
 
-The plan is the contract. Show it to the user and wait for sign-off before any code changes. A short message — "Here's the plan, OK to proceed?" — is enough. If the user is non-interactive (e.g. this is a scripted run), proceed but keep `PLAN.md` updated as the source of truth.
+Write the plan next to the spec you found, without asking again: `docs/specs/<slug>/PLAN.md`, or root `PLAN-<slug>.md` if the spec is root `SPEC-<slug>.md`, or chat only if the spec is only in the conversation. With no spec, pick a slug yourself. If `docs/` exists, create `docs/specs/<slug>/` without asking. If `docs/` is missing, ask:
+
+> `docs/` doesn't exist. Where should the plan go?
+> 1. Create `docs/specs/<slug>/` **(recommended)**
+> 2. Root (`PLAN-<slug>.md`, `NOTES-<slug>.md`)
+> 3. Chat only. Nothing is written to disk, so it won't survive a lost session.
+
+With option 2, write `PLAN-<slug>.md` and `NOTES-<slug>.md` at the root. With option 3, write nothing; keep the plan in the conversation.
+
+`NOTES.md` lives beside `PLAN.md`. From here on, `PLAN.md` and `NOTES.md` mean this task's plan and notes files, wherever they live: `docs/specs/<slug>/PLAN.md` or root `PLAN-<slug>.md`.
+
+The plan is the contract. Show it to the user and wait for sign-off before any code changes. A short message — "Here's the plan, OK to proceed?" — is enough. If the user is non-interactive (e.g. this is a scripted run), proceed but keep `PLAN.md` updated as the source of truth. If the plan is chat only, it lives in the conversation: each step report repeats it with updated statuses instead of editing a file.
 
 ### Phase 3 — Execute one step at a time
 
@@ -66,12 +83,12 @@ Do not bundle steps. Even when a step feels trivial, doing it on its own gives y
 
 Only run this after all `PLAN.md` steps are done.
 
-1. Run the full test suite (the command in `CONTEXT-*.md` "Project shape", or the project's standard `test` command).
+1. Run the full test suite (the command in the spec's "Project shape", or the project's standard `test` command).
 2. Run the linter and formatter. Apply formatter changes if they're auto-fixable; review and apply linter changes manually if not.
 3. Run the type-checker (if the project has one).
 4. **Sync affected documentation.** For each file in your diff, ask: did this change invalidate anything documented elsewhere? Check at minimum: `README.md` (usage examples, feature list, install/setup steps), `CHANGELOG.md` if the project keeps one, inline doc comments / docstrings on modified public APIs, and any docs the modified file links to or is linked from. Update only what the *current change* invalidated — do not rewrite docs that are unrelated-but-stale (log those in `NOTES.md` instead). Doc-only edits in this step don't need their own `PLAN.md` step.
 5. Re-read your full diff (`git diff` against the base branch). Look for: debug prints, `console.log`, `print()`, commented-out code, TODO comments you added and didn't resolve, unrelated changes that crept in, hardcoded paths or values that shouldn't be there.
-6. Verify the change does what was asked. Re-read the "Task" section of `CONTEXT-*.md` (or `PLAN.md`'s goal) and confirm the change addresses it.
+6. Verify the change does what was asked. Re-read the "Task" section of the spec (or `PLAN.md`'s goal) and confirm the change addresses it.
 
 If anything in steps 4–6 fails, you are not done. Either fix it or revise `PLAN.md` and continue.
 

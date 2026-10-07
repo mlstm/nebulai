@@ -5,7 +5,7 @@
 
 ## Goal
 
-What the user-visible outcome is, in 1–3 sentences. Cite the source if there is one: a ticket, a `CONTEXT-*.md`, a Slack thread.
+What the user-visible outcome is, in 1–3 sentences. Cite the source if there is one: a ticket, a `SPEC.md`, a Slack thread.
 
 ## Non-goals
 
@@ -19,7 +19,7 @@ What this plan is *not* doing, even if related. Pin this down explicitly — it'
 
 Files / docs this plan is built against. Anyone reviewing the plan should be able to follow the trail.
 
-- `CONTEXT-oauth-refresh.md`
+- `docs/specs/oauth-refresh/SPEC.md`
 - `src/auth/tests/refresh.test.ts` (encodes the invariants)
 - `migrations/2024-08-01-refresh-tokens.sql` (current schema)
 

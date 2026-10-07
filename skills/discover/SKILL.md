@@ -1,11 +1,11 @@
 ---
 name: discover
-description: Gather and document the context needed to implement a feature, fix a bug, or refactor code in an unfamiliar or large codebase. Use this skill at the start of any non-trivial coding task, before writing or modifying any code — especially when the user asks to "implement", "add", "fix", "refactor", "change how X works", or "look into" something, even if they don't explicitly say "explore" or "investigate". Also use when the user shares a ticket, bug report, or feature request that touches unfamiliar parts of a codebase. Produces a single markdown artifact (`CONTEXT-<slug>.md`) that lists every file, symbol, convention, and constraint relevant to the task. Do NOT use this skill for trivial edits (typo fixes, one-line changes in a file the user pointed to directly) or for tasks that are purely conversational (explaining a concept, reviewing a snippet pasted into chat).
+description: Gather and document the context needed to implement a feature, fix a bug, or refactor code in an unfamiliar or large codebase. Use this skill at the start of any non-trivial coding task, before writing or modifying any code — especially when the user asks to "implement", "add", "fix", "refactor", "change how X works", or "look into" something, even if they don't explicitly say "explore" or "investigate". Also use when the user shares a ticket, bug report, or feature request that touches unfamiliar parts of a codebase. Produces a single markdown artifact (`docs/specs/<slug>/SPEC.md`) that lists every file, symbol, convention, and constraint relevant to the task. Do NOT use this skill for trivial edits (typo fixes, one-line changes in a file the user pointed to directly) or for tasks that are purely conversational (explaining a concept, reviewing a snippet pasted into chat).
 license: MIT
 metadata:
   author: "Tim Miles"
   email: "49971977+mlstm@users.noreply.github.com"
-  version: "1.0"
+  version: "2.0"
 model: opus
 effort: high
 ---
@@ -18,13 +18,22 @@ Context-gathering as an explicit, observable phase. The output is one markdown f
 
 Models are trained to skim. Asked to "implement feature X", an agent typically opens two or three files, pattern-matches, and starts editing — missing the file that defines the convention, the test that encodes the invariant, the migration that constrains the schema. The resulting code looks plausible and breaks something subtle.
 
-This skill forces a separation: **first** produce a context artifact, **then** (in a separate phase, possibly a separate session) implement against it. The artifact is the deliverable of this skill. Not code. Not a partial implementation. A document.
+This skill forces a separation: **first** produce a spec, **then** (in a separate phase, possibly a separate session) implement against it. The artifact is the deliverable of this skill. Not code. Not a partial implementation. A document.
 
 ## When this skill is active
 
-Do not write, edit, or rewrite any source file in the project. The only file you create is `CONTEXT-<slug>.md` in the repo root (or `docs/context/` if that directory exists). Read-only commands (`ls`, `grep`/`rg`, `find`/`fd`, `cat`, `git log`, `git blame`) are encouraged. Running tests or builds is fine if it helps you understand behavior. Running migrations, package installs, or anything that mutates state is not.
+Do not write, edit, or rewrite any source file in the project. The only file you create is `docs/specs/<slug>/SPEC.md`, plus the folders needed for it. Read-only commands (`ls`, `grep`/`rg`, `find`/`fd`, `cat`, `git log`, `git blame`) are encouraged. Running tests or builds is fine if it helps you understand behavior. Running migrations, package installs, or anything that mutates state is not.
 
-If the user explicitly asks you to start coding during this phase, stop and confirm: "I'm in discovery mode and have not finished the context document. Do you want me to skip ahead and start coding, or finish discovery first?"
+If `docs/` exists, create `docs/specs/<slug>/` without asking. If `docs/` is missing, ask:
+
+> `docs/` doesn't exist. Where should the spec go?
+> 1. Create `docs/specs/<slug>/` **(recommended)**
+> 2. Root (`SPEC-<slug>.md`)
+> 3. Chat only. Nothing is written to disk, so it won't survive a lost session.
+
+With option 2, write `SPEC-<slug>.md` at the root. With option 3, write nothing; give the full spec in the Phase 7 handoff message.
+
+If the user explicitly asks you to start coding during this phase, stop and confirm: "I'm in discovery mode and have not finished the spec. Do you want me to skip ahead and start coding, or finish discovery first?"
 
 ## The procedure
 
@@ -80,7 +89,7 @@ A constraint is anything that limits how the change can be made. These are easy 
 
 ### Phase 5 — Write the artifact
 
-Use the template in `assets/CONTEXT-TEMPLATE.md`. Copy it to `CONTEXT-<slug>.md` (or `docs/context/CONTEXT-<slug>.md` if that directory exists) and fill in every section. The `<slug>` is a short kebab-case identifier for the task — e.g. `CONTEXT-oauth-refresh.md`, `CONTEXT-fix-pagination-off-by-one.md`.
+Use the template in `assets/SPEC-TEMPLATE.md`. Copy it to `docs/specs/<slug>/SPEC.md` (or wherever the location prompt put it) and fill in every section. The `<slug>` is a short kebab-case identifier for the task — e.g. `docs/specs/oauth-refresh/`, `docs/specs/fix-pagination-off-by-one/`.
 
 ### Phase 6 — Self-check
 
@@ -99,10 +108,10 @@ Before handing off to the user, validate your own work against this checklist. I
 
 End your turn with a short message:
 
-1. Path to the artifact.
+1. Path to the spec (or the full spec inline, if the user chose chat only).
 2. A 2–3 sentence summary of what you found.
 3. The "Open questions" section copied inline so the user doesn't have to open the file.
-4. Explicit ask: "Should I revise the context document, or is this ready to use as input to an implementation session?"
+4. Explicit ask: "Should I revise the spec, or is this ready to use as input to an implementation session?"
 
 Do not start implementing even if the user seems eager. The next phase (implementation) belongs to a separate session or a separate skill, with the artifact as input.
 
@@ -121,4 +130,4 @@ These are mistakes the skill exists to prevent. If you notice yourself doing any
 
 ## Output
 
-A single markdown file at `CONTEXT-<slug>.md` (or `docs/context/CONTEXT-<slug>.md`), following `assets/CONTEXT-TEMPLATE.md`. No code changes. No partial implementation. No "I went ahead and started on the easy parts."
+A single markdown file at `docs/specs/<slug>/SPEC.md` (or root `SPEC-<slug>.md` / chat, per the location prompt), following `assets/SPEC-TEMPLATE.md`. No code changes. No partial implementation. No "I went ahead and started on the easy parts."
